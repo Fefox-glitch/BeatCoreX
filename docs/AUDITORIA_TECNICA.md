@@ -2,7 +2,7 @@
 
 Fecha: 2026-10-11. Base auditada: `dc8da7fcda8dcce68b3aa66596ae05e76daea1e2` (main).
 
-El repositorio es una base documental, no un proyecto Unreal ejecutable. Contiene README y 13 DOCX; no contiene `.uproject`, `Source`, `Config`, mapas, Blueprints, música ni modelos. Se propone construir primero un combate local con Kael Sync contra CPU y BPM constante. Este informe y el [plan](PLAN_IMPLEMENTACION.md) son propuestas para revisión; no constituyen una implementación ni evidencia de compilación.
+El repositorio es una base documental, no un proyecto Unreal ejecutable. Contiene README y 13 DOCX; no contiene `.uproject`, `Source`, `Config`, mapas, Blueprints, música ni modelos. Se propone construir primero un combate local con Kael Sync contra CPU y BPM constante. Este informe y el [plan](PLAN_IMPLEMENTACION.md) cierran la documentación de PR #1 con los contratos corregidos de tiempo, validación y capas. No constituyen implementación ni evidencia de compilación. La próxima PR #2 se limita a la base controlable de Fase A.
 
 ## Fuentes y método
 
@@ -87,9 +87,11 @@ Un módulo runtime `BeatCoreX` inicialmente, con carpetas lógicas Core, Rhythm,
 | Dueño C++ propuesto | Responsabilidad | Blueprint y datos |
 | --- | --- | --- |
 | UBCXMusicClockSubsystem (WorldSubsystem) | Adaptador Quartz, transporte, tiempo musical continuo, loop, reset, eventos con índice | Configuración musical, sin reloj alternativo en Level BP |
+| FBCXCalibrationSnapshot | Mapeo monotónico/musical inmutable por evaluación; CalibrationAge valida vigencia, InputDeltaSeconds usa entrada original | Estado técnico independiente del juicio y audio |
+| UBCXMusicLayerManager | Único registro por sesión/capa, ciclo Requested/Scheduled/Active/Expiring, renovación y limpieza | Ready propio de MetaSound no activa ni califica; contrato, diferido fuera de Fase A |
 | FBCXTimingEvaluator / FBCXHitResult | Función pura de clasificación, BeatId, error firmado, calidad | Ventanas editables; no escribe HUD ni daño |
 | ABCXPlayerCharacter / ABCXPlayerController | Movimiento, cámara e input único | BP_BCX_PlayerCharacter: mesh, SpringArm, Camera, AnimBP |
-| UBCXCombatComponent | Petición de ataque, consumo de beat, estado y trace de impacto | AnimMontage y feedback, parámetros en DataAsset |
+| UBCXCombatComponent | Validación antes de commit; deduplicación SessionGeneration+AttackId; consumo de beat, estado y trace | AnimMontage y feedback, parámetros en DataAsset |
 | UBCXComboComponent | Combo de precisión, max y score; futura secuencia separada | Dispatchers para HUD; sin Tick para puntuar |
 | UBCXHealthComponent | Salud, daño validado, muerte y reset | Eventos visuales jugador/enemigo |
 | ABCXEnemyCharacter / ABCXEnemyAIController | Acercarse, anunciar, atacar en beat programado, recuperar, morir | BP_BCX_EnemyBasic y parámetros; FSM inicial, Behavior Tree después si se necesita |
@@ -97,7 +99,7 @@ Un módulo runtime `BeatCoreX` inicialmente, con carpetas lógicas Core, Rhythm,
 | UBCXPrototypeHUDWidget | Suscripción a estado, actualización visual | Widget_BCX_HUD; no calcula calificación |
 | UBCXSongDefinition / UBCXCombatDefinition | Audio, BPM, compás, offset, loop; ventanas y daño | DataAssets versionados, validados antes de jugar |
 
-Flujo: input -> snapshot musical -> calificación -> validación/consumo -> ataque e impacto -> salud; resultado de ritmo -> score/combo -> evento HUD. Enemigo lee el mismo transporte y agenda índices futuros. UI/animación consumen resultados sin recalcularlos. Referencias inyectadas por dueño/subsystem, evitar búsquedas globales por frame. Exponer solicitudes con BlueprintCallable, resultados con BlueprintReadOnly/dispatchers y parámetros con EditDefaultsOnly. Nunca aplicar daño en C++ y BP simultáneamente.
+Flujo: captura original -> validación de sesión/BPM/calibración/timestamp -> calificación -> commit deduplicado y reserva -> ataque/impacto -> salud; resultado de ritmo -> score/combo -> HUD. Rechazo técnico no se registra como procesado ni Miss. Enemigo lee el mismo transporte y agenda índices futuros. UI/animación consumen resultados sin recalcularlos. Exponer solicitudes con BlueprintCallable, resultados con BlueprintReadOnly/dispatchers y parámetros con EditDefaultsOnly. Nunca aplicar daño en C++ y BP simultáneamente. El [contrato C++ y ciclo de sesión](PLAN_IMPLEMENTACION.md#contrato-c-propuesto) del plan es la referencia única de comportamiento; las capas no añaden habilidades al alcance.
 
 ## Dependencias y entorno
 
@@ -105,11 +107,26 @@ Requeridas propuestas: UE 5.6 fijado a una versión concreta, toolchain C++ Wind
 
 Se consultó [Enhanced Input 5.6](https://dev.epicgames.com/documentation/en-us/unreal-engine/enhanced-input-in-unreal-engine?application_version=5.6): acciones y contextos son assets y ofrecen transición desde input legacy. [Configuración de Visual Studio 5.6](https://dev.epicgames.com/documentation/en-us/unreal-engine/setting-up-visual-studio-development-environment-for-cplusplus-projects-in-unreal-engine?application_version=5.6) indica VS2022 17.8 mínimo y 17.14 recomendado. Verificar también MSVC/SDK exactos en esa tabla y en UBT; no adoptar por accidente recomendaciones de UE5.8.
 
-[Quartz](https://dev.epicgames.com/documentation/unreal-engine/overview-of-quartz-in-unreal-engine) permite programar audio por adelantado en el renderizador. La página consultada es 5.8: su explicación conceptual respalda la propuesta, pero las firmas y el comportamiento deben comprobarse en 5.6. La precisión de audio no garantiza callbacks de gameplay ni input precisos a nivel de muestra. OnAudioPlaybackPercent se deja como diagnóstico, no garantía de sincronía bajo lag.
+### APIs contrastadas de UE5.6
+
+Consulta documental realizada con `application_version=5.6`. Las páginas C++ Quartz intentadas no fueron accesibles mediante la herramienta; se verificaron métodos reflejados en la referencia Python oficial 5.6, que identifica sus clases/módulos/headers C++. No trasladar firmas Python (tuplas/out parameters) literalmente a C++; los overloads exactos de Quartz quedan por cotejar con headers instalados en PR #2 o al implementar su adaptador. No se sustituye esta evidencia por documentación 5.8.
+
+| Clase y módulo | API concreta verificada y uso | Evidencia 5.6 |
+| --- | --- | --- |
+| UQuartzSubsystem, AudioMixer, QuartzSubsystem.h | CreateNewClock(context, name, settings, override, useAudioEngineClockManager); DeleteClockByHandle/Name; reloj de audio y nombre único por generación | [Referencia reflejada](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/QuartzSubsystem?application_version=5.6) |
+| UQuartzClockHandle, AudioMixer, AudioMixerClockHandle.h | GetCurrentTimestamp(context), GetEstimatedRunTime(context); StopClock(context, cancelPendingEvents), UnsubscribeFromAllTimeDivisions; StartClock y SetBeatsPerMinute con frontera/delegate | [Referencia reflejada](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/QuartzClockHandle?application_version=5.6) |
+| UAudioComponent, Engine, AudioComponent.h | PlayQuantized(context, handle, boundary, delegate, startTime, fadeInDuration, fadeVolumeLevel, fadeCurve); Stop/FadeOut para limpieza de instancia | [Referencia reflejada](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/AudioComponent?application_version=5.6) |
+| EQuartzCommandDelegateSubType, Engine, QuartzQuantizationUtilities.h | COMMAND_ON_QUEUED, COMMAND_ON_STARTED, COMMAND_ON_ABOUT_TO_START, COMMAND_ON_CANCELED, COMMAND_ON_FAILED_TO_QUEUE | [Enum 5.6](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/QuartzCommandDelegateSubType?application_version=5.6) |
+| FQuartzTransportTimeStamp, Engine, QuartzQuantizationUtilities.h | Bars/Beat/BeatFraction/Seconds: snapshot de transporte; no timestamp del input | [Struct 5.6](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/QuartzTransportTimeStamp?application_version=5.6) |
+| UMetaSoundOutputSubsystem, plugin Metasound, módulo MetasoundEngine, MetasoundOutputSubsystem.h | WatchOutput y UnwatchOutput; observación de output de Source reproduciéndose, no preparación previa | [Referencia reflejada](https://dev.epicgames.com/documentation/en-us/unreal-engine/python-api/class/MetaSoundOutputSubsystem?application_version=5.6) y [WatchOutput C++ 5.6](https://dev.epicgames.com/documentation/unreal-engine/API/Plugins/MetasoundEngine/UMetaSoundOutputSubsystem/WatchOutput?application_version=5.6) |
+
+Firma C++ documental comprobada: `bool WatchOutput(UAudioComponent*, FName, const FOnMetasoundOutputValueChanged&, FName, FName)`, también overload nativo; include `MetasoundOutputSubsystem.h`. Su bool indica registro exitoso. `Ready` es un output que BeatCoreX tendría que definir en el asset, no un método ni una garantía de audio audible. MetasoundEngine solo se agrega al usar ese contrato en implementación posterior.
+
+GetEstimatedRunTime advierte que su estimación tiene latencia; no usarlo como tiempo exacto del input. El handle es wrapper de game thread: conservar timestamp original y mapping calibrado, sin equiparar llegada del delegate con beat audible. La precisión de audio no garantiza input/gameplay a nivel de muestra. OnAudioPlaybackPercent queda como diagnóstico, no garantía bajo lag. Cancelación, timeouts, callbacks y limpieza de componentes requieren pruebas de integración en 5.6; aquí no están demostrados.
 
 Faltan pista con licencia, BPM/downbeat/loop verificables, modelo y animaciones compatibles, hitboxes, datos de daño y assets UI. Mixamo/Blender/DAW/MetaSounds son herramientas citadas en D10, no assets ni dependencias instaladas. Vivox/Photon/Steam son alternativas futuras sin proveedor elegido; no instalar ni incorporar credenciales. Git LFS para futuros uasset/umap/audio debe definirse antes de añadir binarios.
 
-En este equipo no se encontró UE_5.6 en la ruta habitual de Epic Games ni un registro de builds en HKCU consultado. Esto no demuestra ausencia en otras unidades. No se realizó compilación, ejecución PIE ni empaquetado; no hay proyecto que compilar. Git clone HTTPS funciona; SSH falló por verificación de clave de host y `gh` no está disponible.
+En este equipo no se encontró UE_5.6 en la ruta habitual de Epic Games ni un registro de builds en HKCU consultado; el manifiesto `C:\ProgramData\Epic\UnrealEngineLauncher\LauncherInstalled.dat` devuelve InstallationList vacía. No se localizó vswhere.exe ni SDK en las rutas habituales de Visual Studio Installer/Windows Kits. Esto no demuestra ausencia en otras unidades. Confirmar ruta de engine y VS/MSVC/SDK compatible es bloqueo real para compilar/validar Fase A. Git LFS 3.7.1 está disponible; push HTTPS a la rama funciona. No se realizó compilación, PIE ni empaquetado; no hay proyecto que compilar.
 
 ## Riesgos e información pendiente
 
@@ -126,6 +143,6 @@ En este equipo no se encontró UE_5.6 en la ruta habitual de Epic Games ni un re
 | Toolchain y hardware objetivo no inventariados | No se puede garantizar build ni rendimiento | PR base con build real y manifiesto del entorno |
 | Documentos duplicados y sin precedencia | Deriva de requisitos | Matriz de fuentes, decisiones versionadas en PR |
 
-Pendientes de diseño: relación de notas con ataques, cámara definitiva, reglas exactas de Miss y combo cuando no hay enemigo en alcance, pasiva de Kael en el primer slice, compás/BPM/pista, mando, bloqueo/esquiva y dificultad. Proponer cifras permite probar; no las convierte en canon. Los anexos UML de D10 están anunciados, no desarrollados en el texto extraído.
+El plan fija las políticas de ensayo de Miss/combo, cámara, notas en HUD y pasiva diferida; ya no son contratos contradictorios ni bloqueos para iniciar Fase A. Su balance/dirección final, pista con licencia, calibración y sincronía física siguen por validar en implementación. Mando, bloqueo/esquiva, dificultad y lore final quedan fuera del alcance inmediato. No exigir esos elementos para construir la base controlable. Los anexos UML de D10 están anunciados, no desarrollados en el texto extraído.
 
 El primer entregable implementado se acepta solo con evidencia de compilación UE5.6, ejecución local y paquete Windows. Una revisión documental o una compilación C++ aislada no valida el prototipo jugable.
