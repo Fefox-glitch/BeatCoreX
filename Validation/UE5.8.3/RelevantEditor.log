@@ -1,0 +1,37 @@
+[2026.10.11-09.02.30:907][581]LogBeatCoreX: BCX_SESSION Generation=1
+[2026.10.11-09.02.30:944][581]LogBeatCoreX: BCX_MAPPING Added=IMC_Gameplay Generation=1
+[2026.10.11-09.04.38:867][233]LogPython: BCX_PIE_VALIDATION_STARTED
+[2026.10.11-09.04.40:937][329]LogBeatCoreX: BCX_JUMP Started InputTimeSeconds=16777908.922037199
+[2026.10.11-09.04.41:190][335]LogBeatCoreX: BCX_JUMP Released InputTimeSeconds=16777909.174152799
+[2026.10.11-09.04.42:702][425]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=1 InputTimeSeconds=16777910.686787698 Type=EBCXAttackType::Punch
+[2026.10.11-09.04.45:082][565]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=2 InputTimeSeconds=16777913.067161001 Type=EBCXAttackType::Punch
+[2026.10.11-09.04.45:668][600]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=3 InputTimeSeconds=16777913.653313100 Type=EBCXAttackType::Kick
+[2026.10.11-09.04.48:054][734]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=4 InputTimeSeconds=16777916.038665500 Type=EBCXAttackType::Kick
+[2026.10.11-09.04.48:619][768]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=5 InputTimeSeconds=16777916.604031399 Type=EBCXAttackType::Headbutt
+[2026.10.11-09.04.50:980][908]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=6 InputTimeSeconds=16777918.964302599 Type=EBCXAttackType::Headbutt
+[2026.10.11-09.04.51:541][941]LogBeatCoreX: BCX_MAPPING Added=IMC_Gameplay Generation=1
+[2026.10.11-09.04.52:318][988]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=7 InputTimeSeconds=16777920.302864298 Type=EBCXAttackType::Punch
+[2026.10.11-09.04.53:267][ 39]LogBeatCoreX: BCX_SESSION Generation=2
+[2026.10.11-09.04.53:268][ 39]LogBeatCoreX: BCX_MAPPING Added=IMC_Gameplay Generation=2
+[2026.10.11-09.04.55:177][150]LogBeatCoreX: BCX_ATTACK Generation=2 AttackId=1 InputTimeSeconds=16777923.161950301 Type=EBCXAttackType::Punch
+[2026.10.11-09.05.47:202][170]LogAutomationController: Display: Test Started. Name={SessionIdentity} Path={BeatCoreX.Core.SessionIdentity}
+[2026.10.11-09.05.47:210][170]LogBeatCoreX: BCX_SESSION Generation=1
+[2026.10.11-09.05.47:210][170]LogBeatCoreX: BCX_SESSION Generation=2
+[2026.10.11-09.05.47:225][171]LogAutomationController: Display: Test Completed. Result={Success} Name={SessionIdentity} Path={BeatCoreX.Core.SessionIdentity}
+[2026.10.11-09.06.10:490][561]LogBeatCoreX: BCX_SESSION Generation=1
+[2026.10.11-09.06.10:497][561]LogBeatCoreX: BCX_MAPPING Added=IMC_Gameplay Generation=1
+[2026.10.11-09.06.20:050][126]LogPython: BCX_PIE_VALIDATION_STARTED
+[2026.10.11-09.06.22:093][248]LogBeatCoreX: BCX_JUMP Started InputTimeSeconds=16778010.077574100
+[2026.10.11-09.06.22:360][264]LogBeatCoreX: BCX_JUMP Released InputTimeSeconds=16778010.344547801
+[2026.10.11-09.06.23:878][355]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=1 InputTimeSeconds=16778011.862675801 Type=EBCXAttackType::Punch
+[2026.10.11-09.06.26:244][497]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=2 InputTimeSeconds=16778014.229240600 Type=EBCXAttackType::Punch
+[2026.10.11-09.06.26:812][531]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=3 InputTimeSeconds=16778014.796897199 Type=EBCXAttackType::Kick
+[2026.10.11-09.06.29:188][672]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=4 InputTimeSeconds=16778017.172823701 Type=EBCXAttackType::Kick
+[2026.10.11-09.06.29:771][707]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=5 InputTimeSeconds=16778017.756126601 Type=EBCXAttackType::Headbutt
+[2026.10.11-09.06.32:137][849]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=6 InputTimeSeconds=16778020.122686401 Type=EBCXAttackType::Headbutt
+[2026.10.11-09.06.32:715][883]LogBeatCoreX: BCX_MAPPING Added=IMC_Gameplay Generation=1
+[2026.10.11-09.06.33:471][929]LogBeatCoreX: BCX_ATTACK Generation=1 AttackId=7 InputTimeSeconds=16778021.456277899 Type=EBCXAttackType::Punch
+[2026.10.11-09.06.34:381][981]LogBeatCoreX: BCX_SESSION Generation=2
+[2026.10.11-09.06.34:382][981]LogBeatCoreX: BCX_MAPPING Added=IMC_Gameplay Generation=2
+[2026.10.11-09.06.36:352][ 99]LogBeatCoreX: BCX_ATTACK Generation=2 AttackId=1 InputTimeSeconds=16778024.337170199 Type=EBCXAttackType::Punch
+[2026.10.11-09.06.37:209][150]LogPython: BCX_PIE_VALIDATION_PASS

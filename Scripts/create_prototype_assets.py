@@ -65,8 +65,10 @@ def create_mappings(context, actions):
     mappings = []
 
     def add(action, key, modifiers=()):
+        input_key = unreal.Key()
+        input_key.set_editor_property("key_name", key)
         mappings.append(unreal.EnhancedActionKeyMapping(
-            action=actions[action], key=unreal.Key(key_name=key),
+            action=actions[action], key=input_key,
             modifiers=list(modifiers), triggers=[]))
 
     def negate():

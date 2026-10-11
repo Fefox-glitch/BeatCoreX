@@ -1,0 +1,87 @@
+{
+  "assets": [
+    {
+      "path": "/Game/BeatCoreX/Blueprints/Core/BP_BCX_PrototypeGameMode.BP_BCX_PrototypeGameMode",
+      "class": "Blueprint"
+    },
+    {
+      "path": "/Game/BeatCoreX/Characters/Player/BP_BCX_PlayerCharacter.BP_BCX_PlayerCharacter",
+      "class": "Blueprint"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IA_Headbutt.IA_Headbutt",
+      "class": "InputAction"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IA_Jump.IA_Jump",
+      "class": "InputAction"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IA_Kick.IA_Kick",
+      "class": "InputAction"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IA_Look.IA_Look",
+      "class": "InputAction"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IA_Move.IA_Move",
+      "class": "InputAction"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IA_Punch.IA_Punch",
+      "class": "InputAction"
+    },
+    {
+      "path": "/Game/BeatCoreX/Input/IMC_Gameplay.IMC_Gameplay",
+      "class": "InputMappingContext"
+    },
+    {
+      "path": "/Game/BeatCoreX/Maps/Map_Prototype_Combat.Map_Prototype_Combat",
+      "class": "World"
+    }
+  ],
+  "mappings": [
+    {
+      "action": "IA_Move",
+      "key": "W"
+    },
+    {
+      "action": "IA_Move",
+      "key": "S"
+    },
+    {
+      "action": "IA_Move",
+      "key": "A"
+    },
+    {
+      "action": "IA_Move",
+      "key": "D"
+    },
+    {
+      "action": "IA_Look",
+      "key": "MouseX"
+    },
+    {
+      "action": "IA_Look",
+      "key": "MouseY"
+    },
+    {
+      "action": "IA_Jump",
+      "key": "SpaceBar"
+    },
+    {
+      "action": "IA_Punch",
+      "key": "LeftMouseButton"
+    },
+    {
+      "action": "IA_Kick",
+      "key": "E"
+    },
+    {
+      "action": "IA_Headbutt",
+      "key": "Q"
+    }
+  ],
+  "blueprints_compiled_and_saved": 2
+}

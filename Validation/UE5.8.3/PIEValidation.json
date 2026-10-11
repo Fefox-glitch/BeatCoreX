@@ -1,0 +1,319 @@
+{
+  "method": "Real PIE, Enhanced Input vector injection each editor frame",
+  "tests": {
+    "Movement": {
+      "status": "PASS",
+      "evidence": {
+        "distance_cm": 436.9916705917528
+      }
+    },
+    "CameraControl": {
+      "status": "PASS",
+      "evidence": {
+        "yaw": 14.5,
+        "pitch": 352.75
+      }
+    },
+    "Jump": {
+      "status": "PASS",
+      "evidence": {
+        "max_height_delta_cm": 183.66374520823302
+      }
+    },
+    "PunchHold": {
+      "status": "PASS",
+      "evidence": {
+        "intent_count": 1,
+        "held_seconds": 2.0
+      }
+    },
+    "KickHold": {
+      "status": "PASS",
+      "evidence": {
+        "intent_count": 3,
+        "held_seconds": 2.0
+      }
+    },
+    "HeadbuttHold": {
+      "status": "PASS",
+      "evidence": {
+        "intent_count": 5,
+        "held_seconds": 2.0
+      }
+    },
+    "PossessionGeneration": {
+      "status": "PASS",
+      "evidence": 1
+    },
+    "HeldAndRepressedAttacks": {
+      "status": "PASS",
+      "evidence": [
+        {
+          "generation": 1,
+          "id": 1,
+          "time": 16778011.8626758,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 2,
+          "time": 16778014.2292406,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 3,
+          "time": 16778014.7968972,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 4,
+          "time": 16778017.1728237,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 5,
+          "time": 16778017.7561266,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 6,
+          "time": 16778020.1226864,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 7,
+          "time": 16778021.4562779,
+          "type": "PUNCH"
+        }
+      ]
+    },
+    "IncrementalIds": {
+      "status": "PASS",
+      "evidence": [
+        {
+          "generation": 1,
+          "id": 1,
+          "time": 16778011.8626758,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 2,
+          "time": 16778014.2292406,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 3,
+          "time": 16778014.7968972,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 4,
+          "time": 16778017.1728237,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 5,
+          "time": 16778017.7561266,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 6,
+          "time": 16778020.1226864,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 7,
+          "time": 16778021.4562779,
+          "type": "PUNCH"
+        }
+      ]
+    },
+    "AttackTypes": {
+      "status": "PASS",
+      "evidence": [
+        {
+          "generation": 1,
+          "id": 1,
+          "time": 16778011.8626758,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 2,
+          "time": 16778014.2292406,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 3,
+          "time": 16778014.7968972,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 4,
+          "time": 16778017.1728237,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 5,
+          "time": 16778017.7561266,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 6,
+          "time": 16778020.1226864,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 7,
+          "time": 16778021.4562779,
+          "type": "PUNCH"
+        }
+      ]
+    },
+    "SessionRestart": {
+      "status": "PASS",
+      "evidence": [
+        {
+          "generation": 2,
+          "id": 1,
+          "time": 16778024.3371702,
+          "type": "PUNCH"
+        }
+      ]
+    },
+    "OriginalTimestamps": {
+      "status": "PASS",
+      "evidence": [
+        {
+          "generation": 1,
+          "id": 1,
+          "time": 16778011.8626758,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 2,
+          "time": 16778014.2292406,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 1,
+          "id": 3,
+          "time": 16778014.7968972,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 4,
+          "time": 16778017.1728237,
+          "type": "KICK"
+        },
+        {
+          "generation": 1,
+          "id": 5,
+          "time": 16778017.7561266,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 6,
+          "time": 16778020.1226864,
+          "type": "HEADBUTT"
+        },
+        {
+          "generation": 1,
+          "id": 7,
+          "time": 16778021.4562779,
+          "type": "PUNCH"
+        },
+        {
+          "generation": 2,
+          "id": 1,
+          "time": 16778024.3371702,
+          "type": "PUNCH"
+        }
+      ]
+    },
+    "CameraFollow": {
+      "status": "PASS",
+      "evidence": {
+        "camera_follow_distance_cm": 358.22478976195936,
+        "camera_location": "<Struct 'Vector' (0x0000016F0809EA40) {x: -350.000000, y: 40.000000, z: 163.150000}>"
+      }
+    },
+    "OriginalTimestampLogConservation": {
+      "status": "PASS",
+      "evidence": {
+        "matched_intents": 8,
+        "tolerance_seconds": 1E-08
+      }
+    }
+  },
+  "intents": [
+    {
+      "generation": 1,
+      "id": 1,
+      "time": 16778011.8626758,
+      "type": "PUNCH"
+    },
+    {
+      "generation": 1,
+      "id": 2,
+      "time": 16778014.2292406,
+      "type": "PUNCH"
+    },
+    {
+      "generation": 1,
+      "id": 3,
+      "time": 16778014.7968972,
+      "type": "KICK"
+    },
+    {
+      "generation": 1,
+      "id": 4,
+      "time": 16778017.1728237,
+      "type": "KICK"
+    },
+    {
+      "generation": 1,
+      "id": 5,
+      "time": 16778017.7561266,
+      "type": "HEADBUTT"
+    },
+    {
+      "generation": 1,
+      "id": 6,
+      "time": 16778020.1226864,
+      "type": "HEADBUTT"
+    },
+    {
+      "generation": 1,
+      "id": 7,
+      "time": 16778021.4562779,
+      "type": "PUNCH"
+    },
+    {
+      "generation": 2,
+      "id": 1,
+      "time": 16778024.3371702,
+      "type": "PUNCH"
+    }
+  ],
+  "status": "PASS"
+}
