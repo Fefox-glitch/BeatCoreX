@@ -1,4 +1,4 @@
-"""Run inside UE5.6 Editor after the native module has built.
+"""Run inside UE5.8 Editor after the native module has built.
 
 Creates six input assets, one context, two data-only Blueprints and a graybox.
 Refuses to overwrite assets or close a dirty map. No standalone Python mock
@@ -45,7 +45,8 @@ def create_data_asset(name, directory, asset_class):
 def create_blueprint(path, parent):
     bp = unreal.BlueprintEditorLibrary.create_blueprint_asset_with_parent(path, parent)
     require(bp is not None, "Failed to create " + path)
-    unreal.BlueprintEditorLibrary.compile_blueprint(bp)
+    require(unreal.BlueprintEditorLibrary.compile_blueprint(bp),
+            "Blueprint compiler failed: " + path)
     require(unreal.BlueprintEditorLibrary.generated_class(bp) is not None,
             "Blueprint has no generated class: " + path)
     return bp
@@ -88,8 +89,12 @@ def create_mappings(context, actions):
     add("IA_Headbutt", "Q")
     # No Pressed/Pulse/Hold triggers: Bool uses its default threshold;
     # Started binding records exactly one intention for each press transition.
-    context.set_editor_property("mappings", mappings)
-    require(len(context.get_editor_property("mappings")) == 10,
+    # UE5.8 stores defaults inside FInputMappingContextMappingData.
+    # The old top-level Mappings property is deprecated since 5.7.
+    mapping_data = unreal.InputMappingContextMappingData(mappings=mappings)
+    context.set_editor_property("default_key_mappings", mapping_data)
+    stored_data = context.get_editor_property("default_key_mappings")
+    require(len(stored_data.get_editor_property("mappings")) == 10,
             "Mapping serialization did not retain all ten entries")
     save_asset(context)
 
@@ -139,8 +144,25 @@ def create_map(game_mode_class):
 
 
 def main():
-    require(unreal.SystemLibrary.get_engine_version().startswith("5.6."),
-            "This generator requires UE5.6")
+    require(unreal.SystemLibrary.get_engine_version().startswith("5.8."),
+            "This generator requires UE5.8")
+    # Check the reflected API before touching persistent assets; no fallback
+    # to deprecated 5.6 properties or synthetic .uasset files.
+    for name in ("InputMappingContextMappingData", "EnhancedActionKeyMapping",
+                 "DataAssetFactory", "BlueprintEditorLibrary", "EditorActorSubsystem",
+                 "LevelEditorSubsystem", "InputModifierNegate", "InputModifierSwizzleAxis"):
+        require(hasattr(unreal, name), "UE5.8 Python API unavailable: " + name)
+    probe_context = unreal.InputMappingContext()
+    probe_context.get_editor_property("default_key_mappings")
+    for owner, functions in (
+        (unreal.BlueprintEditorLibrary, ("create_blueprint_asset_with_parent", "compile_blueprint", "generated_class")),
+        (unreal.get_editor_subsystem(unreal.LevelEditorSubsystem), ("new_level", "save_current_level", "is_in_play_in_editor")),
+        (unreal.get_editor_subsystem(unreal.EditorActorSubsystem), ("spawn_actor_from_class", "get_all_level_actors")),
+    ):
+        for function in functions:
+            require(callable(getattr(owner, function, None)), "UE5.8 API missing: " + function)
+    require(not unreal.get_editor_subsystem(unreal.LevelEditorSubsystem).is_in_play_in_editor(),
+            "Stop PIE before creating assets")
     require(not unreal.EditorLoadingAndSavingUtils.get_dirty_map_packages(),
             "Save the current map before creating prototype assets")
     require(not unreal.EditorLoadingAndSavingUtils.get_dirty_content_packages(),
@@ -172,13 +194,15 @@ def main():
         ("IA_Kick", "kick_action"), ("IA_Headbutt", "headbutt_action"),
     ):
         player_defaults.set_editor_property(prop, actions[name])
-    unreal.BlueprintEditorLibrary.compile_blueprint(player)
+    require(unreal.BlueprintEditorLibrary.compile_blueprint(player),
+            "Player Blueprint compilation failed")
     save_asset(player)
     mode = create_blueprint(MODE_BP, mode_class)
     mode_defaults = unreal.get_default_object(unreal.BlueprintEditorLibrary.generated_class(mode))
     mode_defaults.set_editor_property("default_pawn_class",
                                     unreal.BlueprintEditorLibrary.generated_class(player))
-    unreal.BlueprintEditorLibrary.compile_blueprint(mode)
+    require(unreal.BlueprintEditorLibrary.compile_blueprint(mode),
+            "GameMode Blueprint compilation failed")
     save_asset(mode)
     create_map(unreal.BlueprintEditorLibrary.generated_class(mode))
     unreal.log("BCX_ASSETS_SAVED: inspect Blueprint compiler results and test PIE; this is not gameplay validation.")
