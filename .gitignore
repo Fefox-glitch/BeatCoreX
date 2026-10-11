@@ -73,3 +73,9 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Prototype validation and local editor tools
+/Artifacts/
+/.idea/
+__pycache__/
+*.pyc
